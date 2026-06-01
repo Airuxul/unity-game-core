@@ -1,36 +1,19 @@
 # Unity Game Core (`com.air.unity-game-core`) v2
 
-Unity ????????**? UI????????**?
+Unity 运行时基础设施：**无 UI、无全局单例门面**。
 
 ## API
 
-| ?? | ?? |
+| 类型 | 说明 |
 |------|------|
-| `GameRuntime` | `Events` + `Resources`?`GameRuntime.CreateDefault()` |
-| `IGameRuntime` | ????? |
+| `GameRuntime` | `Events` + `Resources` |
 | `EventBus` | `On` / `Emit` / `Off` |
-| `IResManager` | ?????`UnityResManager`?`AssetBundleResManager`? |
-| `PoolManager` / `UnityObjectPool<T>` | Unity ??? |
+| `IResManager` | 资源加载 |
 
-## ??
-
-```csharp
-using Air.UnityGameCore.Runtime;
-
-var runtime = GameRuntime.CreateDefault();
-runtime.Events.On("game.start", () => { });
-runtime.Events.Emit("game.start");
-```
-
-## ??
+## 安装
 
 ```json
 "com.air.unity-game-core": "file:../CustomPackages/packages/com.air.unity-game-core"
 ```
 
-???`com.air.game-core` 1.0.1+
-
-## ???
-
-- [Game Core](../com.air.game-core/README.md)
-- [unity-ui](../unity-ui/README.md)??? UI ??
+依赖 `com.air.game-core` 1.0.1+。
