@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Air.GameCore;
 using UnityEngine;
 
 namespace Air.UnityGameCore.Runtime.Resource
@@ -359,20 +360,26 @@ namespace Air.UnityGameCore.Runtime.Resource
         /// </summary>
         public void UnloadUnusedBundles()
         {
-            var bundlesToRemove = new List<string>();
-            
-            foreach (var kvp in _bundleInfoDict)
+            var bundlesToRemove = ListPool<string>.Get();
+            try
             {
-                if (kvp.Value.RefCount <= 0)
+                foreach (var kvp in _bundleInfoDict)
                 {
-                    bundlesToRemove.Add(kvp.Key);
+                    if (kvp.Value.RefCount <= 0)
+                    {
+                        bundlesToRemove.Add(kvp.Key);
+                    }
+                }
+
+                foreach (var bundlePath in bundlesToRemove)
+                {
+                    var bundleInfo = _bundleInfoDict[bundlePath];
+                    UnloadBundleInternal(bundlePath, bundleInfo);
                 }
             }
-
-            foreach (var bundlePath in bundlesToRemove)
+            finally
             {
-                var bundleInfo = _bundleInfoDict[bundlePath];
-                UnloadBundleInternal(bundlePath, bundleInfo);
+                ListPool<string>.Return(bundlesToRemove);
             }
         }
 

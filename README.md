@@ -1,19 +1,32 @@
 # Unity Game Core (`com.air.unity-game-core`) v2
 
-Unity 运行时基础设施：**无 UI、无全局单例门面**。
+Unity runtime infrastructure: **no UI**, **no global singleton facade**. Hold a `GameRuntime` instance at the game entry point.
 
-## API
+## Runtime API (v2)
 
-| 类型 | 说明 |
+| Type | Role |
 |------|------|
-| `GameRuntime` | `Events` + `Resources` |
+| `GameRuntime` / `IGameRuntime` | `Events` + `Resources` |
 | `EventBus` | `On` / `Emit` / `Off` |
-| `IResManager` | 资源加载 |
+| `IResManager` | Resource loading |
+| `TimerManager` / `Timer` | Timers |
+| `PoolManager` | Unity `GameObject` / `Component` pools |
 
-## 安装
+Depends on **`com.air.game-core`** for pure C# helpers (e.g. `ListPool<T>` in resource code).
+
+## Install
 
 ```json
 "com.air.unity-game-core": "file:../CustomPackages/packages/com.air.unity-game-core"
 ```
 
-依赖 `com.air.game-core` 1.0.1+。
+Requires `com.air.game-core` 1.0.1+.
+
+## Editor-only (not part of Runtime v2 API)
+
+`Editor/AssetDependency/*` ? asset dependency analyzer windows and cache. Safe to ignore for player builds; not used by `GameRuntime`.
+
+## Related
+
+- [Game Core](../com.air.game-core/README.md)
+- [Unity UI](../com.air.unity-ui/README.md)
