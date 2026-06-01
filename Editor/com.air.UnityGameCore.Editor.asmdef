@@ -1,0 +1,20 @@
+{
+    "name": "com.air.UnityGameCore.Editor",
+    "rootNamespace": "Air.UnityGameCore.Editor",
+    "references": [
+        "com.air.UnityGameCore.Runtime",
+        "UnityEditor",
+        "UnityEngine.UIElementsModule"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,222 @@
+/* 根容器 */
+.root-container {
+    padding: 10px;
+    flex-grow: 1;
+}
+
+/* ============================================ */
+/* 标题区域 */
+/* ============================================ */
+.header-section {
+    margin-bottom: 10px;
+}
+
+.title-label {
+    font-size: 18px;
+    -unity-font-style: bold;
+    margin-bottom: 5px;
+    color: rgb(220, 220, 220);
+}
+
+.description-label {
+    font-size: 12px;
+    color: rgb(180, 180, 180);
+}
+
+/* ============================================ */
+/* 控制区域 */
+/* ============================================ */
+.control-section {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(50, 50, 50, 0.3);
+    border-radius: 5px;
+}
+
+.asset-field {
+    margin-bottom: 5px;
+}
+
+.asset-info-label {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 11px;
+    color: rgb(200, 200, 200);
+    white-space: normal;
+}
+
+/* 按钮容器 */
+.button-container {
+    flex-direction: row;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/* 通用按钮样式 */
+.action-button {
+    flex-grow: 1;
+    height: 25px;
+    margin-right: 5px;
+    border-radius: 3px;
+    border-width: 1px;
+}
+
+.action-button:hover {
+    background-color: rgba(100, 100, 100, 0.5);
+}
+
+.action-button:active {
+    background-color: rgba(80, 80, 80, 0.8);
+}
+
+/* 主要按钮 */
+.primary-button {
+    background-color: rgba(50, 120, 180, 0.8);
+    border-color: rgba(80, 150, 200, 0.5);
+}
+
+.primary-button:hover {
+    background-color: rgba(60, 140, 200, 0.9);
+}
+
+/* 次要按钮 */
+.secondary-button {
+    flex-grow: 0;
+    min-width: 60px;
+    background-color: rgba(80, 80, 80, 0.8);
+    border-color: rgba(100, 100, 100, 0.5);
+}
+
+.secondary-button:hover {
+    background-color: rgba(100, 100, 100, 0.9);
+}
+
+/* 递归选项 */
+.recursive-toggle {
+    margin-top: 10px;
+}
+
+/* ============================================ */
+/* 结果区域 */
+/* ============================================ */
+.result-section {
+    flex-grow: 1;
+    min-height: 200px;
+}
+
+.result-header {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    align-items: center;
+}
+
+.result-title-label {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(220, 220, 220);
+}
+
+.result-count-label {
+    font-size: 12px;
+    color: rgb(180, 180, 180);
+}
+
+.result-scroll-view {
+    flex-grow: 1;
+    background-color: rgba(50, 50, 50, 0.2);
+    border-radius: 5px;
+    padding: 5px;
+    border-width: 1px;
+    border-color: rgba(80, 80, 80, 0.5);
+}
+
+/* ============================================ */
+/* 结果项样式 */
+/* ============================================ */
+.result-item {
+    flex-direction: row;
+    padding: 3px 10px 3px 10px;
+    margin-bottom: 2px;
+    background-color: rgba(64, 64, 64, 0.3);
+    border-radius: 3px;
+    align-items: center;
+}
+
+.result-item:hover {
+    background-color: rgba(76, 76, 76, 0.5);
+}
+
+/* 结果项左侧容器 */
+.result-item-left {
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: center;
+}
+
+/* 资源图标 */
+.result-item-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    flex-shrink: 0;
+}
+
+/* 资源名称 */
+.result-item-name {
+    flex-grow: 1;
+    -unity-text-align: middle-left;
+    color: rgb(220, 220, 220);
+}
+
+/* 结果项按钮容器 */
+.result-item-buttons {
+    flex-direction: row;
+    flex-shrink: 0;
+}
+
+/* 结果项按钮 */
+.result-item-button {
+    min-width: 50px;
+    height: 20px;
+    margin-right: 3px;
+    font-size: 11px;
+    border-radius: 2px;
+    background-color: rgba(80, 80, 80, 0.8);
+    border-width: 1px;
+    border-color: rgba(100, 100, 100, 0.5);
+}
+
+.result-item-button:hover {
+    background-color: rgba(100, 100, 100, 0.9);
+}
+
+.result-item-button:active {
+    background-color: rgba(70, 70, 70, 0.9);
+}
+
+.result-item-button:last-child {
+    margin-right: 0;
+}
+
+/* ============================================ */
+/* 分组标签 */
+/* ============================================ */
+.group-label {
+    font-size: 12px;
+    -unity-font-style: bold;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color: rgb(102, 204, 255);
+}
+
+/* ============================================ */
+/* 空状态 */
+/* ============================================ */
+.empty-label {
+    -unity-text-align: middle-center;
+    padding-top: 20px;
+    color: rgb(150, 150, 150);
+}
+
+

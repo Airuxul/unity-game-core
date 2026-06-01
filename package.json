@@ -1,0 +1,15 @@
+{
+  "name": "com.air.unity-game-core",
+  "displayName": "Unity Game Core",
+  "version": "2.0.0",
+  "unity": "2020.3",
+  "description": "Unity runtime: GameRuntime, EventBus, resource loading, timers, Unity object pools.",
+  "keywords": ["game-framework", "event", "resource", "timer"],
+  "category": "Unity",
+  "author": {
+    "name": "airuxul"
+  },
+  "dependencies": {
+    "com.air.game-core": "1.0.1"
+  }
+}

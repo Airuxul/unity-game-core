@@ -1,0 +1,47 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" 
+         xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         engine="UnityEngine.UIElements" 
+         editor="UnityEditor.UIElements" 
+         noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" 
+         editor-extension-mode="True">
+    <ui:VisualElement name="root-container" class="root-container">
+        <!-- 标题区域 -->
+        <ui:VisualElement name="header-section" class="header-section">
+            <ui:Label text="资源依赖分析工具" name="title-label" class="title-label" />
+            <ui:Label text="分析资源的依赖关系和反向依赖关系" name="description-label" class="description-label" />
+        </ui:VisualElement>
+
+        <!-- 控制区域 -->
+        <ui:VisualElement name="control-section" class="control-section">
+            <!-- 资源选择 -->
+            <uie:ObjectField label="选择资源" name="asset-field" class="asset-field" />
+            
+            <!-- 资源信息 -->
+            <ui:Label text="请选择一个资源" name="asset-info-label" class="asset-info-label" />
+            
+            <!-- 按钮组 -->
+            <ui:VisualElement name="button-container" class="button-container">
+                <ui:Button text="查询依赖" name="analyze-dependencies-btn" class="action-button primary-button" />
+                <ui:Button text="查询反向依赖" name="analyze-reverse-dependencies-btn" class="action-button primary-button" />
+                <ui:Button text="清除" name="clear-btn" class="action-button secondary-button" />
+            </ui:VisualElement>
+            
+            <!-- 递归选项 -->
+            <ui:Toggle label="递归查询" name="recursive-toggle" value="true" class="recursive-toggle" />
+        </ui:VisualElement>
+
+        <!-- 结果区域 -->
+        <ui:VisualElement name="result-section" class="result-section">
+            <!-- 结果标题栏 -->
+            <ui:VisualElement name="result-header" class="result-header">
+                <ui:Label text="分析结果" name="result-title-label" class="result-title-label" />
+                <ui:Label text="0 个结果" name="result-count-label" class="result-count-label" />
+            </ui:VisualElement>
+            
+            <!-- 结果滚动视图 -->
+            <ui:ScrollView name="result-scroll-view" class="result-scroll-view" mode="Vertical" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
+
+
