@@ -8,12 +8,6 @@ namespace Air.UnityGameCore.Runtime.Resource
     /// </summary>
     public class UnityResManager : ResManager
     {
-        protected override T LoadAsset<T>(string path, ResLoadInfo<T> loadInfo, ELoadType loadType)
-        {
-            var asset = Resources.Load<T>(path);
-            return asset;
-        }
-
         protected override void LoadAssetAsync<T>(string path, ResLoadInfo<T> loadInfo, ELoadType loadType)
         {
             // 从 Resources 文件夹异步加载资源

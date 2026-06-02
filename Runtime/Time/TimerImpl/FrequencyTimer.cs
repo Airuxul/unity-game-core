@@ -11,7 +11,7 @@ namespace Air.UnityGameCore.Runtime.Time {
         
         float timeThreshold;
 
-        public FrequencyTimer(int ticksPerSecond) : base(0) {
+        public FrequencyTimer(int ticksPerSecond, ITimerService timers) : base(0, timers) {
             CalculateTimeThreshold(ticksPerSecond);
         }
 

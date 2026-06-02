@@ -1,7 +1,10 @@
 {
     "name": "com.air.UnityGameCore.Runtime",
     "rootNamespace": "Air.UnityGameCore.Runtime",
-    "references": ["com.air.GameCore"],
+    "references": [
+        "com.air.GameCore",
+        "Unity.Newtonsoft.Json"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

@@ -10,7 +10,7 @@ namespace Air.UnityGameCore.Runtime.Time {
 
         public Action OnInterval = delegate { };
 
-        public IntervalTimer(float totalTime, float intervalSeconds) : base(totalTime) {
+        public IntervalTimer(float totalTime, float intervalSeconds, ITimerService timers) : base(totalTime, timers) {
             interval = intervalSeconds;
             nextInterval = totalTime - interval;
         }

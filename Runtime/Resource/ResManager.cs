@@ -11,35 +11,6 @@ namespace Air.UnityGameCore.Runtime.Resource
         protected readonly Dictionary<string, Delegate> _loadCallback = new();
         protected readonly Dictionary<string, Delegate> _loadInstCallback = new();
 
-        public T LoadRes<T>(string path) where T : Object
-        {
-            return LoadInternal<T>(path, ELoadType.Instance);
-        }
-
-        public T LoadInstance<T>(string path) where T : Object
-        {
-            return LoadInternal<T>(path, ELoadType.Instance);
-        }
-
-        private T LoadInternal<T>(string path, ELoadType loadType) where T : Object
-        {
-            var loadInfo = GetOrCreateLoadInfo<T>(path);
-            if (loadInfo.IsLoaded())
-            {
-                loadInfo.LoadCount++;
-                return loadInfo.Asset;
-            }
-            // 调用子类实现的具体加载逻辑
-            var asset = LoadAsset(path, loadInfo, loadType);
-            OnAssetLoadCompleted(path, loadInfo, asset, loadType);
-            return asset;
-        }
-
-        /// <summary>
-        /// 抽象方法：子类实现具体的资源加载逻辑
-        /// </summary>
-        protected abstract T LoadAsset<T>(string path, ResLoadInfo<T> loadInfo, ELoadType loadType) where T : Object;
-
         public void LoadResAsync<T>(string path, Action<T> callback) where T: Object
         {
             LoadAsyncInternal(path, callback, ELoadType.Asset);

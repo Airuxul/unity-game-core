@@ -1,30 +1,43 @@
+using Air.UnityGameCore.Runtime;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
 using Air.UnityGameCore.Runtime.Utils;
 
-namespace Air.UnityGameCore.Runtime.Time {
-    internal static class TimerBootstrapper {
-        static PlayerLoopSystem timerSystem;
-        
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-        internal static void Initialize() {
-            PlayerLoopSystem currentPlayerLoop = PlayerLoop.GetCurrentPlayerLoop();
+namespace Air.UnityGameCore.Runtime.Time
+{
+  internal static class TimerBootstrapper
+  {
+    static PlayerLoopSystem _timerSystem;
 
-            if (!InsertTimerManager<Update>(ref currentPlayerLoop, 0)) {
-                Debug.LogWarning("Improved Timers not initialized, unable to register TimerManager into the Update loop.");
-                return;
-            }
-            PlayerLoop.SetPlayerLoop(currentPlayerLoop);
-        }
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+    internal static void Initialize()
+    {
+      var currentPlayerLoop = PlayerLoop.GetCurrentPlayerLoop();
 
-        static bool InsertTimerManager<T>(ref PlayerLoopSystem loop, int index) {
-            timerSystem = new PlayerLoopSystem() {
-                type = typeof(TimerManager),
-                updateDelegate = TimerManager.UpdateTimers,
-                subSystemList = null
-            };
-            return PlayerLoopUtils.InsertSystem<T>(ref loop, in timerSystem, index);
-        }
+      if (!InsertTimerTick<Update>(ref currentPlayerLoop, 0))
+      {
+        Debug.LogWarning("Timers not initialized: unable to register into the Update loop.");
+        return;
+      }
+
+      PlayerLoop.SetPlayerLoop(currentPlayerLoop);
     }
+
+    static void TickActiveRuntimeTimers()
+    {
+      GameRuntime.Current?.Timers?.UpdateTimers();
+    }
+
+    static bool InsertTimerTick<T>(ref PlayerLoopSystem loop, int index)
+    {
+      _timerSystem = new PlayerLoopSystem
+      {
+        type = typeof(TimerService),
+        updateDelegate = TickActiveRuntimeTimers,
+        subSystemList = null
+      };
+      return PlayerLoopUtils.InsertSystem<T>(ref loop, in _timerSystem, index);
+    }
+  }
 }
