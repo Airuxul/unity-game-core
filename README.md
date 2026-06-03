@@ -1,31 +1,41 @@
 # Unity Game Core (`com.air.unity-game-core`)
 
-Unity runtime infrastructure: **no UI**, **no global singleton facade**. Hold a `GameRuntime` instance at the game entry point.
+[简体中文](README.zh-CN.md)
 
-## Runtime API
+**Layer:** L1 Unity infrastructure — depends on `com.air.game-core`. **No UI**, **no CLI/HTTP commands** (those live in `com.air.unity-ui` and `com.air.unity-connector`).
 
-| Type | Role |
-|------|------|
-| `GameRuntime` / `IGameRuntime` | `Events`, `Resources`, `Input`, `Undo`, `Timers`, `Pools`, `Json`, `Entities`, `Scenes`, `Save`, `Audio` |
-| `InputPipeline` / `InputBindingMap` | Unity input ? `CommandHistory.Run` |
-| `GameInputSystem` | Polls `IUnityInputSource`, drives `InputPipeline` each frame |
-| `IJsonSerializer` / `JsonSerialization` | JSON contract + Newtonsoft |
-| `EventBus` | `On` / `Emit` / `Off` |
-| `IResManager` | Resource loading |
-| `ITimerService` / `TimerService` | Timers via `runtime.Timers`; pass service into `CountdownTimer` etc. |
-| `IPoolRegistry` / `PoolRegistry` | Unity `GameObject` / `Component` pools via `runtime.Pools` |
-| `IEntityManager` / `UnityEntityManager` | GF entities + GameObject binding |
-| `ProcedureManager` | Game lifecycle FSM |
-| `ISceneFlow` / `SceneFlow` | Scene load sync/async + events |
-| `ISaveService` / `FileSaveService` | JSON save slots |
-| `IAudioService` / `AudioService` | BGM + pooled SFX |
-| `GameRuntimeInputExtensions` | Ctrl+Z / Ctrl+Y ? `CommandHistory` |
+Unity runtime built around an explicit **`GameRuntime`** instance at the game entry point (not a global singleton facade). `GameRuntime.CreateDefault()` wires event bus, resources, input → undo stack, timers, pools, JSON, entities, procedures, scenes, save, and audio.
 
-Depends on **`com.air.game-core`** 2.4.0+ for Command and Entity.
+## Install
 
-CLI / HTTP commands are in **`com.air.unity-connector`** only.
+```json
+"com.air.unity-game-core": "file:../CustomPackages/packages/com.air.unity-game-core"
+```
 
-### Input example
+Requires `com.air.game-core` **3.0.0+** and `com.unity.nuget.newtonsoft-json`.
+
+## `GameRuntime` surface
+
+| Member | Role |
+|--------|------|
+| `Events` | `EventBus` — `On` / `Emit` / `Off` |
+| `Resources` | `IResManager` — sync/async asset loading |
+| `InputBindings` / `InputPipeline` | Map input phases to `ICommand` → `CommandHistory` |
+| `UndoStack` | GoF undo/redo (`com.air.game-core`) |
+| `Timers` | `ITimerService` — pass into `CountdownTimer` etc. |
+| `Pools` | `IPoolRegistry` — `GameObject` / `Component` pools |
+| `Json` | `IJsonSerializer` (Newtonsoft); registers `JsonHost` on create |
+| `Entities` | `IEntityManager` / `UnityEntityManager` — GF entities + GameObject views |
+| `Procedures` | `ProcedureManager` — game lifecycle FSM |
+| `Scenes` | `ISceneFlow` — load sync/async + scene events |
+| `Save` | `ISaveService` — JSON save slots |
+| `Audio` | `IAudioService` — BGM + pooled SFX |
+
+`GameRuntime.Current` is set while the instance is active. Call `Dispose()` on shutdown to clear timers, pools, entities, events, and audio.
+
+## Examples
+
+### Input → command
 
 ```csharp
 using Air.GameCore.Command;
@@ -43,7 +53,7 @@ var input = runtime.CreateLegacyKeyboardInput(keyboard);
 new GameObject("GameInput").AddComponent<GameInputUpdater>().Install(input);
 ```
 
-### Timer example
+### Timer
 
 ```csharp
 var runtime = GameRuntime.CreateDefault();
@@ -52,7 +62,7 @@ cooldown.OnTimerStop += () => Debug.Log("done");
 cooldown.Start();
 ```
 
-### Entity example
+### Entity
 
 ```csharp
 using Air.UnityGameCore.Runtime.Entity;
@@ -67,7 +77,6 @@ var view = runtime.Entities.SpawnView(unitPrefab, Vector3.zero, Quaternion.ident
   host.AddComponent(id, new LifetimeComponent { Seconds = 30f });
 });
 
-// Multi-component query (reuse EntityQuery to avoid alloc)
 var query = runtime.Entities.CreateQuery();
 foreach (var id in query.With<TransformComponent>().With<LifetimeComponent>().Execute())
   { /* ... */ }
@@ -102,18 +111,11 @@ new GameObject("Input").AddComponent<GameInputUpdater>().Install(input);
 ```csharp
 using var runtime = GameRuntime.CreateDefault();
 // ...
-runtime.Dispose(); // timers, pools, events; clears GameRuntime.Current
+runtime.Dispose(); // clears GameRuntime.Current
 ```
-
-## Install
-
-```json
-"com.air.unity-game-core": "file:../CustomPackages/packages/com.air.unity-game-core"
-```
-
-Requires `com.air.game-core` 2.3.0+ and `com.unity.nuget.newtonsoft-json`.
 
 ## Related
 
-- [Game Core](../com.air.game-core/README.md)
-- [Unity Connector](../unity-cli/com.air.unity-connector/README.md)
+- [Game Core](../com.air.game-core/README.md) — pure C# Command / Entity / Serialization
+- [Unity UI](../com.air.unity-ui/README.md) — panels on top of `GameRuntime`
+- [Unity Connector](../unity-cli/com.air.unity-connector/README.md) — CLI / HTTP invoke
