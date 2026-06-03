@@ -15,21 +15,20 @@ using Air.UnityGameCore.Runtime.Time;
 
 namespace Air.UnityGameCore.Runtime
 {
-  public interface IGameRuntime : IDisposable
-  {
-    EventBus Events { get; }
-    IResManager Resources { get; }
-    InputBindingMap InputBindings { get; }
-    InputPipeline InputPipeline { get; }
-    CommandHistory UndoStack { get; }
-    ITimerService Timers { get; }
-    IPoolRegistry Pools { get; }
-    IJsonSerializer Json { get; }
-    IEntityManager Entities { get; }
-    ProcedureManager Procedures { get; }
-    ISceneFlow Scenes { get; }
-    ISaveService Save { get; }
-    IAudioService Audio { get; }
-  }
+    public interface IGameRuntime : IDisposable
+    {
+        EventBus Events { get; }
+        IResManager Resources { get; }
+        InputBindingMap InputBindings { get; }
+        InputPipeline InputPipeline { get; }
+        CommandHistory UndoStack { get; }
+        ITimerService Timers { get; }
+        IPoolRegistry Pools { get; }
+        IJsonSerializer Json { get; }
+        IEntityManager Entities { get; }
+        ProcedureManager Procedures { get; }
+        ISceneFlow Scenes { get; }
+        ISaveService Save { get; }
+        IAudioService Audio { get; }
+    }
 }
-

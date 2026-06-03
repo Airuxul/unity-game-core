@@ -16,83 +16,83 @@ using Air.UnityGameCore.Runtime.Time;
 
 namespace Air.UnityGameCore.Runtime
 {
-  /// <summary>
-  /// Default game runtime. Create at entry, call <see cref="Dispose"/> on shutdown.
-  /// Timers tick via PlayerLoop only while this instance is <see cref="Current"/>.
-  /// </summary>
-  public sealed class GameRuntime : IGameRuntime
-  {
-    public static GameRuntime Current { get; private set; }
-
-    public EventBus Events { get; }
-    public IResManager Resources { get; }
-    public InputBindingMap InputBindings { get; }
-    public InputPipeline InputPipeline { get; }
-    public CommandHistory UndoStack { get; }
-    public ITimerService Timers { get; }
-    public IPoolRegistry Pools { get; }
-    public IJsonSerializer Json { get; }
-    public IEntityManager Entities { get; }
-    public ProcedureManager Procedures { get; }
-    public UnityEntityLogicFactory EntityLogics { get; }
-    public DictionaryEntityAssetProvider EntityAssets { get; }
-    public ISceneFlow Scenes { get; }
-    public ISaveService Save { get; }
-    public IAudioService Audio { get; }
-
-    readonly AudioService _audioService = new();
-
-    bool _disposed;
-
-    public GameRuntime(
-      IResManager resources,
-      IJsonSerializer json = null,
-      int undoStackDepth = 128)
+    /// <summary>
+    /// Default game runtime. Create at entry, call <see cref="Dispose"/> on shutdown.
+    /// Timers tick via PlayerLoop only while this instance is <see cref="Current"/>.
+    /// </summary>
+    public sealed class GameRuntime : IGameRuntime
     {
-      Resources = resources ?? throw new ArgumentNullException(nameof(resources));
-      Events = new EventBus();
-      InputBindings = new InputBindingMap();
-      UndoStack = new CommandHistory(undoStackDepth);
-      InputPipeline = new InputPipeline(InputBindings, UndoStack);
-      Timers = new TimerService();
-      Pools = new PoolRegistry();
-      EntityLogics = new UnityEntityLogicFactory();
-      EntityAssets = new DictionaryEntityAssetProvider();
-      Entities = new UnityEntityManager(EntityLogics, Resources, EntityAssets, Events, Pools);
-      Procedures = new ProcedureManager();
-      Scenes = new SceneFlow(Events);
+        public static GameRuntime Current { get; private set; }
 
-      JsonSerializationBootstrap.EnsureRegistered();
-      Json = json ?? NewtonsoftJsonSerializer.Default;
-      Save = new FileSaveService(Json);
-      Audio = _audioService;
+        public EventBus Events { get; }
+        public IResManager Resources { get; }
+        public InputBindingMap InputBindings { get; }
+        public InputPipeline InputPipeline { get; }
+        public CommandHistory UndoStack { get; }
+        public ITimerService Timers { get; }
+        public IPoolRegistry Pools { get; }
+        public IJsonSerializer Json { get; }
+        public IEntityManager Entities { get; }
+        public ProcedureManager Procedures { get; }
+        public UnityEntityLogicFactory EntityLogics { get; }
+        public DictionaryEntityAssetProvider EntityAssets { get; }
+        public ISceneFlow Scenes { get; }
+        public ISaveService Save { get; }
+        public IAudioService Audio { get; }
 
-      Current = this;
+        readonly AudioService _audioService = new();
+
+        bool _disposed;
+
+        public GameRuntime(
+            IResManager resources,
+            IJsonSerializer json = null,
+            int undoStackDepth = 128)
+        {
+            Resources = resources ?? throw new ArgumentNullException(nameof(resources));
+            Events = new EventBus();
+            InputBindings = new InputBindingMap();
+            UndoStack = new CommandHistory(undoStackDepth);
+            InputPipeline = new InputPipeline(InputBindings, UndoStack);
+            Timers = new TimerService();
+            Pools = new PoolRegistry();
+            EntityLogics = new UnityEntityLogicFactory();
+            EntityAssets = new DictionaryEntityAssetProvider();
+            Entities = new UnityEntityManager(EntityLogics, Resources, EntityAssets, Events, Pools);
+            Procedures = new ProcedureManager();
+            Scenes = new SceneFlow(Events);
+
+            JsonSerializationBootstrap.EnsureRegistered();
+            Json = json ?? NewtonsoftJsonSerializer.Default;
+            Save = new FileSaveService(Json);
+            Audio = _audioService;
+
+            Current = this;
+        }
+
+        public static GameRuntime CreateDefault() => new(new UnityResManager());
+
+        public GameInputSystem CreateLegacyKeyboardInput(UnityLegacyKeyboardSource source = null)
+        {
+            source ??= new UnityLegacyKeyboardSource();
+            return new GameInputSystem(InputPipeline, source);
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            Timers.Clear();
+            Pools.ClearAll();
+            Entities.HideAllEntities();
+            Events.Clear();
+            _audioService.Dispose();
+
+            if (Current == this)
+                Current = null;
+
+            _disposed = true;
+        }
     }
-
-    public static GameRuntime CreateDefault() => new(new UnityResManager());
-
-    public GameInputSystem CreateLegacyKeyboardInput(UnityLegacyKeyboardSource source = null)
-    {
-      source ??= new UnityLegacyKeyboardSource();
-      return new GameInputSystem(InputPipeline, source);
-    }
-
-    public void Dispose()
-    {
-      if (_disposed)
-        return;
-
-      Timers.Clear();
-      Pools.ClearAll();
-      Entities.HideAllEntities();
-      Events.Clear();
-      _audioService.Dispose();
-
-      if (Current == this)
-        Current = null;
-
-      _disposed = true;
-    }
-  }
 }
