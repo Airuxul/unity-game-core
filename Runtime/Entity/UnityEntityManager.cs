@@ -72,7 +72,12 @@ namespace Air.UnityGameCore.Runtime.Entity
             return true;
         }
 
-        public void HideAllLoadedEntities(EntityGroupName group) => _core.HideAllLoadedEntities(group);
+        public void HideAllLoadedEntities(EntityGroupName group)
+        {
+            var ids = new List<EntityId>(_core.GetEntitiesInGroup(group));
+            for (var i = ids.Count - 1; i >= 0; i--)
+                HideEntity(ids[i]);
+        }
 
         public bool HasEntity(EntityId id) => _core.HasEntity(id);
 

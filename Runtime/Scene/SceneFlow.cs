@@ -9,7 +9,7 @@ namespace Air.UnityGameCore.Runtime.Scene
     {
         readonly EventBus _events;
 
-        public string ActiveSceneName => SceneManager.GetActiveScene().name;
+        public string ActiveSceneName => ResolveActiveGameplaySceneName();
         public bool IsLoading { get; private set; }
 
         public SceneFlow(EventBus events)
@@ -26,6 +26,7 @@ namespace Air.UnityGameCore.Runtime.Scene
             _events.Emit(SceneEvents.LoadStarted, sceneName);
             SceneManager.LoadScene(sceneName, mode);
             IsLoading = false;
+            TrySetActiveGameplayScene(sceneName);
             _events.Emit(SceneEvents.LoadCompleted, sceneName);
             onCompleted?.Invoke();
         }
@@ -48,9 +49,56 @@ namespace Air.UnityGameCore.Runtime.Scene
             op.completed += _ =>
             {
                 IsLoading = false;
+                TrySetActiveGameplayScene(sceneName);
                 _events.Emit(SceneEvents.LoadCompleted, sceneName);
                 onCompleted?.Invoke();
             };
+        }
+
+        static string ResolveActiveGameplaySceneName()
+        {
+            var active = SceneManager.GetActiveScene();
+            if (IsGameplayScene(active))
+                return active.name;
+
+            for (var i = SceneManager.sceneCount - 1; i >= 0; i--)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (IsGameplayScene(scene))
+                    return scene.name;
+            }
+
+            return active.name;
+        }
+
+        static bool IsGameplayScene(UnityEngine.SceneManagement.Scene scene) =>
+            scene.IsValid() && scene.isLoaded && !string.IsNullOrEmpty(scene.path);
+
+        static void TrySetActiveGameplayScene(string sceneName)
+        {
+            if (string.IsNullOrWhiteSpace(sceneName))
+                return;
+
+            for (var i = 0; i < SceneManager.sceneCount; i++)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (!IsGameplayScene(scene) || scene.name != sceneName)
+                    continue;
+
+                if (SceneManager.GetActiveScene() == scene)
+                    return;
+
+                try
+                {
+                    SceneManager.SetActiveScene(scene);
+                }
+                catch (System.ArgumentException ex)
+                {
+                    Debug.LogWarning($"[SceneFlow] Skip SetActiveScene for '{sceneName}': {ex.Message}");
+                }
+
+                return;
+            }
         }
     }
 }

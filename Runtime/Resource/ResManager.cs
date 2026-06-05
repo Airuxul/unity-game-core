@@ -92,13 +92,17 @@ namespace Air.UnityGameCore.Runtime.Resource
 
             if (loadType == ELoadType.Instance)
             {
-                var instance = Object.Instantiate(asset);
-                callback.Invoke(instance);
+                // Each waiter must receive its own instance (ShowEntity batching on cold load).
+                foreach (var del in callback.GetInvocationList())
+                {
+                    if (del is Action<T> single)
+                        single.Invoke(Object.Instantiate(asset));
+                }
+
+                return;
             }
-            else
-            {
-                callback.Invoke(asset);
-            }
+
+            callback.Invoke(asset);
         }
 
         protected Dictionary<string, Delegate> GetCallbackDict(ELoadType loadType)
