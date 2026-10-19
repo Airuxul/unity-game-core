@@ -4,16 +4,16 @@
 
 > **User doc (Chinese):** [../TODO.zh-CN.md](../TODO.zh-CN.md)
 
-> **Boundary:** `GameRuntime`, `EventBus`, `IResManager`, entities, procedures host, timers, pools, scene/save/audio glue.  
+> **Boundary:** `GameRuntime`, `IResManager`, entities, procedures host, PlayerLoop time driver, pools, scene/save/audio glue. Global events and the time wheel are in `com.air.game-core`.  
 > **Out of scope:** UI, CLI commands, reimplementing L0 command/entity/FSM rules.  
 > **Meta rollup:** [AirUnityPackage `docs/TODO_ROADMAP.md`](https://github.com/Airuxul/AirUnityPackage/blob/main/docs/TODO_ROADMAP.md)
 
 ## Capability baseline
 
 - `GameRuntime` / `IGameRuntime` explicit instance + `Current`
-- `EventBus`, `UnityResManager` / AB loader, refcounted `UnloadRes`
+- `UnityResManager` / AB loader, refcounted `UnloadRes`
 - Input → `CommandHistory` via `InputPipeline`
-- `TimerService` + PlayerLoop `TimerBootstrapper`
+- `GameTimeDriver` advances the game-core time wheels and flushes async events
 - `PoolRegistry`, `UnityEntityManager`, thin `ProcedureManager`, `SceneFlow`, `FileSaveService`, `AudioService`
 
 ## TODO
@@ -29,11 +29,9 @@
 | UGC-07 | P1 | Procedure tick bootstrap | `ProcedureManager.Tick` never called; add PlayerLoop/updater hook. |
 | UGC-08 | P1 | Scene load safety | Failed-load events; cancel in-flight; coordinate `Single` load with entity teardown. |
 | UGC-09 | P2 | Complete `GameRuntime.Dispose` | Procedures, input updaters, scene guard, optional `Current` handoff. |
-| UGC-10 | P2 | Timer bootstrap contract | Document/install tick with runtime create; align editor exit vs `Dispose`. |
 | UGC-11 | P2 | Input pipeline semantics | Held-key `Performed` every frame; consider `CanExecute` / chord policy. |
 | UGC-12 | P2 | README / API drift | Remove or implement `RegisterDefaultEntitySystems`, `SpawnView`, `CreateQuery` mentions. |
 | UGC-13 | P2 | Scene event surface | `LoadFailed` / progress for async consumers. |
-| UGC-14 | P3 | `EventBus` hardening | Mixed handler types on same key; reentrancy during `Emit`. |
 | UGC-15 | P3 | Pool registry key stability | Prefab instance ID invalidation on domain reload. |
 
 ## Do not assign here

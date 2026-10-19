@@ -3,6 +3,7 @@
     "rootNamespace": "Air.UnityGameCore.Runtime",
     "references": [
         "com.air.GameCore",
+        "Luban.Runtime",
         "Unity.Newtonsoft.Json"
     ],
     "includePlatforms": [],

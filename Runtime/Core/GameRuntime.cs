@@ -3,7 +3,6 @@ using Air.GameCore.Command;
 using Air.GameCore.Entity;
 using Air.UnityGameCore.Runtime.Entity;
 using Air.UnityGameCore.Runtime.Procedure;
-using Air.UnityGameCore.Runtime.Event;
 using Air.UnityGameCore.Runtime.Input;
 using Air.UnityGameCore.Runtime.Pool;
 using Air.UnityGameCore.Runtime.Resource;
@@ -12,24 +11,20 @@ using Air.UnityGameCore.Runtime.Save;
 using Air.UnityGameCore.Runtime.Scene;
 using Air.GameCore.Serialization;
 using Air.UnityGameCore.Runtime.Serialization;
-using Air.UnityGameCore.Runtime.Time;
 
 namespace Air.UnityGameCore.Runtime
 {
     /// <summary>
     /// Default game runtime. Create at entry, call <see cref="Dispose"/> on shutdown.
-    /// Timers tick via PlayerLoop only while this instance is <see cref="Current"/>.
     /// </summary>
     public sealed class GameRuntime : IGameRuntime
     {
         public static GameRuntime Current { get; private set; }
 
-        public EventBus Events { get; }
         public IResManager Resources { get; }
         public InputBindingMap InputBindings { get; }
         public InputPipeline InputPipeline { get; }
         public CommandHistory UndoStack { get; }
-        public ITimerService Timers { get; }
         public IPoolRegistry Pools { get; }
         public IJsonSerializer Json { get; }
         public IEntityManager Entities { get; }
@@ -50,17 +45,15 @@ namespace Air.UnityGameCore.Runtime
             int undoStackDepth = 128)
         {
             Resources = resources ?? throw new ArgumentNullException(nameof(resources));
-            Events = new EventBus();
             InputBindings = new InputBindingMap();
             UndoStack = new CommandHistory(undoStackDepth);
             InputPipeline = new InputPipeline(InputBindings, UndoStack);
-            Timers = new TimerService();
             Pools = new PoolRegistry();
             EntityLogics = new UnityEntityLogicFactory();
             EntityAssets = new DictionaryEntityAssetProvider();
-            Entities = new UnityEntityManager(EntityLogics, Resources, EntityAssets, Events, Pools);
+            Entities = new UnityEntityManager(EntityLogics, Resources, EntityAssets, Pools);
             Procedures = new ProcedureManager();
-            Scenes = new SceneFlow(Events);
+            Scenes = new SceneFlow();
 
             JsonSerializationBootstrap.EnsureRegistered();
             Json = json ?? NewtonsoftJsonSerializer.Default;
@@ -83,10 +76,8 @@ namespace Air.UnityGameCore.Runtime
             if (_disposed)
                 return;
 
-            Timers.Clear();
             Pools.ClearAll();
             Entities.HideAllEntities();
-            Events.Clear();
             _audioService.Dispose();
 
             if (Current == this)

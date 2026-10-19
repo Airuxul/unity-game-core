@@ -11,7 +11,7 @@ namespace Air.UnityGameCore.Runtime.Utils {
             
             var playerLoopSystemList = new List<PlayerLoopSystem>(loop.subSystemList);
             for (int i = 0; i < playerLoopSystemList.Count; ++i) {
-                if (playerLoopSystemList[i].type == systemToRemove.type && playerLoopSystemList[i].updateDelegate == systemToRemove.updateDelegate) {
+                if (IsSameSystem(playerLoopSystemList[i], systemToRemove)) {
                     playerLoopSystemList.RemoveAt(i);
                     loop.subSystemList = playerLoopSystemList.ToArray();
                     return;
@@ -19,6 +19,11 @@ namespace Air.UnityGameCore.Runtime.Utils {
             }
             
             HandleSubSystemLoopForRemoval<T>(ref loop, systemToRemove);
+        }
+
+        // Type is the player-loop id. GetCurrentPlayerLoop does not reliably round-trip updateDelegate.
+        static bool IsSameSystem(PlayerLoopSystem current, PlayerLoopSystem systemToRemove) {
+            return current.type != null && current.type == systemToRemove.type;
         }
 
         static void HandleSubSystemLoopForRemoval<T>(ref PlayerLoopSystem loop, PlayerLoopSystem systemToRemove) {

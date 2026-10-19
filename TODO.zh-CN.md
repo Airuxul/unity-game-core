@@ -2,16 +2,16 @@
 
 **最后更新：** 2026-06-03 · **范围：** L1 Unity 运行时现有 API 的后续优化（中文）
 
-> **职责边界：** `GameRuntime`、`EventBus`、`IResManager`、Unity 实体、流程宿主、定时器、对象池、场景/存档/音频胶水。  
+> **职责边界：** `GameRuntime`、`IResManager`、Unity 实体、流程宿主、PlayerLoop 时间驱动、对象池、场景/存档/音频胶水。全局事件和时间轮在 `com.air.game-core`。  
 > **不负责：** UI、CLI 命令、在包内重写 L0 命令/实体/FSM 规则。  
 > Agent 英文条目：[`docs/TODO.md`](docs/TODO.md)
 
 ## 现有能力概要
 
 - `GameRuntime` / `IGameRuntime` 显式实例与 `Current`
-- `EventBus`、资源管理器与 `UnloadRes` 引用计数
+- 资源管理器与 `UnloadRes` 引用计数
 - 输入经 `InputPipeline` 进入 `CommandHistory`
-- `TimerService` + PlayerLoop 引导
+- `GameTimeDriver` 推进 game-core 时间轮，并在帧末执行异步事件
 - `PoolRegistry`、`UnityEntityManager`、薄 `ProcedureManager`、`SceneFlow`、存档与音频
 
 ## 待办列表
@@ -27,11 +27,9 @@
 | UGC-07 | P1 | 流程 Tick 引导 | `ProcedureManager.Tick` 无 PlayerLoop/Updater 调用。 |
 | UGC-08 | P1 | 场景加载安全 | 失败事件、取消进行中加载、`Single` 与实体清理协同。 |
 | UGC-09 | P2 | 完善 `Dispose` | 流程、输入更新器、场景守卫、`Current` 切换策略。 |
-| UGC-10 | P2 | 定时器引导约定 | 与创建/编辑器退出/`Dispose` 文档化一致。 |
 | UGC-11 | P2 | 输入管线语义 | 长按每帧 `Performed`；可考虑 `CanExecute`/和弦策略。 |
 | UGC-12 | P2 | README 与 API 一致 | 文档中的 `SpawnView`/`CreateQuery` 等待实现或删除。 |
 | UGC-13 | P2 | 场景事件扩展 | `LoadFailed`/进度等。 |
-| UGC-14 | P3 | `EventBus` 加固 | 同键混用委托类型；`Emit` 中 `Off` 重入。 |
 | UGC-15 | P3 | 池注册表键稳定性 | 域重载后预制体 InstanceID 失效。 |
 
 ## 请勿在本包实现

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Air.GameCore;
 using Air.GameCore.Entity;
 using Air.UnityGameCore.Runtime.Event;
 using Air.UnityGameCore.Runtime.Pool;
@@ -15,20 +16,17 @@ namespace Air.UnityGameCore.Runtime.Entity
         readonly IResManager _resources;
         readonly IPoolRegistry _pools;
         readonly IEntityAssetProvider _assets;
-        readonly EventBus _events;
         readonly Dictionary<int, GameObject> _views = new();
 
         public UnityEntityManager(
             IEntityLogicFactory logicFactory,
             IResManager resources,
             IEntityAssetProvider assets,
-            EventBus events,
             IPoolRegistry pools = null)
         {
             _core = new EntityManager(logicFactory ?? throw new ArgumentNullException(nameof(logicFactory)));
             _resources = resources ?? throw new ArgumentNullException(nameof(resources));
             _assets = assets ?? throw new ArgumentNullException(nameof(assets));
-            _events = events ?? throw new ArgumentNullException(nameof(events));
             _pools = pools;
         }
 
@@ -37,7 +35,7 @@ namespace Air.UnityGameCore.Runtime.Entity
         public EntityId ShowEntity(EntityTypeId typeId, EntityGroupName group, object userData = null)
         {
             var id = _core.ShowEntity(typeId, group, userData);
-            _events.Emit(EntityEvents.Created, id);
+            EventManager.Instance.Invoke(RuntimeEventId.EntityCreated, id);
 
             var path = _assets.GetAssetPath(typeId);
             if (string.IsNullOrEmpty(path))
@@ -68,7 +66,7 @@ namespace Air.UnityGameCore.Runtime.Entity
             if (!_core.HideEntity(id))
                 return false;
 
-            _events.Emit(EntityEvents.Destroyed, id);
+            EventManager.Instance.Invoke(RuntimeEventId.EntityDestroyed, id);
             return true;
         }
 

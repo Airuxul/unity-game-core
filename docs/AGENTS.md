@@ -36,10 +36,10 @@ Indexed in meta repo [AirUnityPackage](https://github.com/Airuxul/AirUnityPackag
 | Folder | Namespace | Responsibility |
 |--------|-----------|----------------|
 | `Runtime/Core/` | `Air.UnityGameCore.Runtime` | `GameRuntime`, `IGameRuntime` |
-| `Runtime/Event/` | `...Event` | `EventBus` |
+| `Runtime/Event/` | `...Event` | `RuntimeEventId`, `ViDelegation`. Global events are `EventManager` in `com.air.game-core` |
 | `Runtime/Resource/` | `...Resource` | `IResManager`, loaders |
 | `Runtime/Input/` | `...Input` | `InputPipeline`, `GameInputSystem`, bindings → `CommandHistory` |
-| `Runtime/Time/` | `...Time` | `ITimerService`, `TimerService`, `TimerImpl/*` |
+| `Runtime/Time/` | `...Time` | `GameTimeDriver` advances `ViTimerInstance` and `ViVisualTimerInstance` |
 | `Runtime/Pool/` | `...Pool` | `IPoolRegistry`, Unity object pools |
 | `Runtime/Entity/` | `...Entity` | `UnityEntityManager`, view binding |
 | `Runtime/Procedure/` | `...Procedure` | `ProcedureManager` (game lifecycle FSM) |
@@ -49,6 +49,8 @@ Indexed in meta repo [AirUnityPackage](https://github.com/Airuxul/AirUnityPackag
 | `Runtime/Serialization/` | `...Serialization` | Newtonsoft `IJsonSerializer`, `JsonSerializationBootstrap` |
 | `Runtime/Coroutine/` | `...Coroutine` | `WaitFor` helpers |
 | `Runtime/Utils/` | `...Utils` | `PlayerLoopUtils` |
+| `Runtime/Locale/` | `Air.UnityGameCore.Runtime` | `Locale` 查表与占位替换。界面绑定在 `com.air.unity-ui` |
+| `Runtime/Data/` | `Air.UnityGameCore.Runtime` | `LubanData`。依赖 `com.code-philosophy.luban`，封装读表 |
 | `Editor/` | `Air.UnityGameCore.Editor.*` | Asset dependency tools, editor extensions |
 
 GoF command and GF entity design live in **`com.air.game-core`**: [Command/DESIGN.md](https://github.com/Airuxul/game-core/blob/main/Command/DESIGN.md), [Entity/DESIGN.md](https://github.com/Airuxul/game-core/blob/main/Entity/DESIGN.md).

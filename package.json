@@ -3,7 +3,7 @@
   "displayName": "Unity Game Core",
   "version": "4.0.0",
   "unity": "2020.3",
-  "description": "Unity runtime: GameRuntime, EventBus, resources, input, JSON (Newtonsoft), timers, Unity object pools.",
+  "description": "Unity runtime: GameRuntime, resources, input, JSON (Newtonsoft), Unity object pools, locale, and Luban table loading. Events and the time wheel are in com.air.game-core.",
   "keywords": ["game-framework", "event", "resource", "timer"],
   "category": "Unity",
   "author": {
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "com.air.game-core": "3.0.0",
+    "com.code-philosophy.luban": "1.2.0",
     "com.unity.nuget.newtonsoft-json": "3.2.1"
   }
 }

@@ -1,4 +1,5 @@
 using System;
+using Air.GameCore;
 using Air.UnityGameCore.Runtime.Event;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,15 +8,8 @@ namespace Air.UnityGameCore.Runtime.Scene
 {
     public sealed class SceneFlow : ISceneFlow
     {
-        readonly EventBus _events;
-
         public string ActiveSceneName => ResolveActiveGameplaySceneName();
         public bool IsLoading { get; private set; }
-
-        public SceneFlow(EventBus events)
-        {
-            _events = events ?? throw new ArgumentNullException(nameof(events));
-        }
 
         public void Load(string sceneName, LoadSceneMode mode = LoadSceneMode.Single, Action onCompleted = null)
         {
@@ -23,11 +17,11 @@ namespace Air.UnityGameCore.Runtime.Scene
                 throw new ArgumentException("Scene name is required.", nameof(sceneName));
 
             IsLoading = true;
-            _events.Emit(SceneEvents.LoadStarted, sceneName);
+            EventManager.Instance.Invoke(RuntimeEventId.SceneLoadStarted, sceneName);
             SceneManager.LoadScene(sceneName, mode);
             IsLoading = false;
             TrySetActiveGameplayScene(sceneName);
-            _events.Emit(SceneEvents.LoadCompleted, sceneName);
+            EventManager.Instance.Invoke(RuntimeEventId.SceneLoadCompleted, sceneName);
             onCompleted?.Invoke();
         }
 
@@ -37,7 +31,7 @@ namespace Air.UnityGameCore.Runtime.Scene
                 throw new ArgumentException("Scene name is required.", nameof(sceneName));
 
             IsLoading = true;
-            _events.Emit(SceneEvents.LoadStarted, sceneName);
+            EventManager.Instance.Invoke(RuntimeEventId.SceneLoadStarted, sceneName);
             var op = SceneManager.LoadSceneAsync(sceneName, mode);
             if (op == null)
             {
@@ -50,7 +44,7 @@ namespace Air.UnityGameCore.Runtime.Scene
             {
                 IsLoading = false;
                 TrySetActiveGameplayScene(sceneName);
-                _events.Emit(SceneEvents.LoadCompleted, sceneName);
+                EventManager.Instance.Invoke(RuntimeEventId.SceneLoadCompleted, sceneName);
                 onCompleted?.Invoke();
             };
         }

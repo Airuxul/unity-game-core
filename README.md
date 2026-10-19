@@ -4,7 +4,7 @@
 
 **Layer:** L1 Unity infrastructure — depends on `com.air.game-core`. **No UI**, **no CLI/HTTP commands** (those live in `com.air.unity-ui` and `com.air.unity-connector`).
 
-Unity runtime built around an explicit **`GameRuntime`** instance at the game entry point (not a global singleton facade). `GameRuntime.CreateDefault()` wires event bus, resources, input → undo stack, timers, pools, JSON, entities, procedures, scenes, save, and audio.
+Unity runtime built around an explicit **`GameRuntime`** instance at the game entry point (not a global singleton facade). `GameRuntime.CreateDefault()` wires resources, input → undo stack, pools, JSON, entities, procedures, scenes, save, and audio. Global events and the time wheel live in `com.air.game-core`. `GameTimeDriver` advances real time and visual time from the PlayerLoop.
 
 ## Install
 
@@ -18,11 +18,9 @@ Requires `com.air.game-core` **3.0.0+** and `com.unity.nuget.newtonsoft-json`.
 
 | Member | Role |
 |--------|------|
-| `Events` | `EventBus` — `On` / `Emit` / `Off` |
 | `Resources` | `IResManager` — sync/async asset loading |
 | `InputBindings` / `InputPipeline` | Map input phases to `ICommand` → `CommandHistory` |
 | `UndoStack` | GoF undo/redo (`com.air.game-core`) |
-| `Timers` | `ITimerService` — pass into `CountdownTimer` etc. |
 | `Pools` | `IPoolRegistry` — `GameObject` / `Component` pools |
 | `Json` | `IJsonSerializer` (Newtonsoft); registers `JsonHost` on create |
 | `Entities` | `IEntityManager` / `UnityEntityManager` — GF entities + GameObject views |
@@ -31,7 +29,7 @@ Requires `com.air.game-core` **3.0.0+** and `com.unity.nuget.newtonsoft-json`.
 | `Save` | `ISaveService` — JSON save slots |
 | `Audio` | `IAudioService` — BGM + pooled SFX |
 
-`GameRuntime.Current` is set while the instance is active. Call `Dispose()` on shutdown to clear timers, pools, entities, events, and audio.
+`GameRuntime.Current` is set while the instance is active. Call `Dispose()` on shutdown to clear pools, entities, and audio.
 
 ## Examples
 
@@ -55,11 +53,14 @@ new GameObject("GameInput").AddComponent<GameInputUpdater>().Install(input);
 
 ### Timer
 
+`GameTimeDriver` calls `ViTimerInstance.Update` and `ViVisualTimerInstance.Update` every frame. Hold the node and `Detach` it when the owner closes.
+
 ```csharp
-var runtime = GameRuntime.CreateDefault();
-var cooldown = new CountdownTimer(3f, runtime.Timers);
-cooldown.OnTimerStop += () => Debug.Log("done");
-cooldown.Start();
+using Air.GameCore;
+
+var node = new ViTimeNode1();
+ViTimerInstance.SetTime(node, 3f, _ => Debug.Log("done"));
+node.Detach();
 ```
 
 ### Entity
@@ -85,8 +86,13 @@ foreach (var id in query.With<TransformComponent>().With<LifetimeComponent>().Ex
 ### Scene load
 
 ```csharp
-runtime.Scenes.LoadAsync("MainMenu", onCompleted: () => Debug.Log("ready"));
-runtime.Events.On<string>(SceneEvents.LoadCompleted, name => Debug.Log(name));
+using Air.GameCore;
+using Air.UnityGameCore.Runtime.Event;
+
+var sceneLoaded = new ViTupleCallback<string>();
+EventManager.Instance.Attach(RuntimeEventId.SceneLoadCompleted, sceneLoaded, (id, name) => Debug.Log(name));
+runtime.Scenes.Load("MainMenu");
+sceneLoaded.End();
 ```
 
 ### Save / audio
